@@ -1,0 +1,8 @@
+%Radius of influence
+
+hold all
+for i = 1:8
+   for j = 1:8
+   plot(i,j,'-bo');
+   end
+end

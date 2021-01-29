@@ -1,0 +1,98 @@
+\begin{thebibliography}{10}
+
+\bibitem{desroziers20144denvar}
+G{\'e}rald Desroziers, Jean-Thomas Camino, and Lo{\"\i}k Berre.
+\newblock 4denvar: link with 4d state formulation of variational assimilation
+  and different possible implementations.
+\newblock {\em Quarterly Journal of the Royal Meteorological Society},
+  140(684):2097--2110, 2014.
+
+\bibitem{evensen1994sequential}
+Geir Evensen.
+\newblock Sequential data assimilation with a nonlinear quasi-geostrophic model
+  using monte carlo methods to forecast error statistics.
+\newblock {\em Journal of Geophysical Research: Oceans}, 99(C5):10143--10162,
+  1994.
+
+\bibitem{fairbairn2014comparison}
+D~Fairbairn, SR~Pring, AC~Lorenc, and I~Roulstone.
+\newblock A comparison of 4dvar with ensemble data assimilation methods.
+\newblock {\em Quarterly Journal of the Royal Meteorological Society},
+  140(678):281--294, 2014.
+
+\bibitem{hamill2006ensemble}
+Thomas~M Hamill.
+\newblock Ensemble-based atmospheric data assimilation.
+\newblock {\em Predictability of weather and climate}, pages 124--156, 2006.
+
+\bibitem{houtekamer2016review}
+PL~Houtekamer and Fuqing Zhang.
+\newblock Review of the ensemble kalman filter for atmospheric data
+  assimilation.
+\newblock {\em Monthly Weather Review}, 144(12):4489--4532, 2016.
+
+\bibitem{nino2017matrix}
+Elias~D Nino-Ruiz.
+\newblock A matrix-free posterior ensemble kalman filter implementation based
+  on a modified cholesky decomposition.
+\newblock {\em Atmosphere}, 8(7):125, 2017.
+
+\bibitem{nino2017posterior}
+Elias~D Nino-Ruiz, Alfonso Mancilla, and Juan~C Calabria.
+\newblock A posterior ensemble kalman filter based on a modified cholesky
+  decomposition.
+\newblock {\em Procedia Computer Science}, 108:2049--2058, 2017.
+
+\bibitem{nino2015parallel}
+Elias~D Nino-Ruiz, Adrian Sandu, and Xinwei Deng.
+\newblock A parallel ensemble kalman filter implementation based on modified
+  cholesky decomposition.
+\newblock In {\em Proceedings of the 6th Workshop on Latest Advances in
+  Scalable Algorithms for Large-Scale Systems}, page~4. ACM, 2015.
+
+\bibitem{nino2017parallel}
+Elias~D Nino-Ruiz, Adrian Sandu, and Xinwei Deng.
+\newblock A parallel implementation of the ensemble kalman filter based on
+  modified cholesky decomposition.
+\newblock {\em Journal of Computational Science}, 2017.
+
+\bibitem{ruiz2016derivative}
+Elias D~Nino Ruiz and Adrian Sandu.
+\newblock A derivative-free trust region framework for variational data
+  assimilation.
+\newblock {\em Journal of Computational and Applied Mathematics}, 293:164--179,
+  2016.
+
+\bibitem{stiller2009efficient2}
+O~Stiller.
+\newblock Efficient moist physics schemes for data assimilation. ii: Deep
+  convection.
+\newblock {\em Quarterly Journal of the Royal Meteorological Society},
+  135(640):721--738, 2009.
+
+\bibitem{stiller2009efficient}
+O~Stiller and SP~Ballard.
+\newblock Efficient moist physics schemes for data assimilation. i: Large-scale
+  clouds and condensation.
+\newblock {\em Quarterly Journal of the Royal Meteorological Society},
+  135(640):707--720, 2009.
+
+\bibitem{sutton2006will}
+Christian Sutton, Thomas~M Hamill, and Thomas~T Warner.
+\newblock Will perturbing soil moisture improve warm-season ensemble forecasts?
+  a proof of concept.
+\newblock {\em Monthly weather review}, 134(11):3174--3189, 2006.
+
+\bibitem{tian2008ensemble}
+Xiangjun Tian, Zhenghui Xie, and Aiguo Dai.
+\newblock An ensemble-based explicit four-dimensional variational assimilation
+  method.
+\newblock {\em Journal of Geophysical Research: Atmospheres}, 113(D21), 2008.
+
+\bibitem{yang1996statistical}
+Shuowen Yang and Qin Xu.
+\newblock Statistical errors in variational data assimilation--a theoretical
+  one-dimensional analysis applied to doppler wind retrieval.
+\newblock {\em Journal of the atmospheric sciences}, 53(18):2563--2577, 1996.
+
+\end{thebibliography}

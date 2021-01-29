@@ -1,0 +1,276 @@
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a general template file for the LaTeX package SVJour3
+% for Springer journals.          Springer Heidelberg 2010/09/16
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article. Delete % signs as needed.
+%
+% This template includes a few options for different layouts and
+% content for various journals. Please consult a previous issue of
+% your journal as needed.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% First comes an example EPS file -- just ignore it and
+% proceed on the \documentclass line
+% your LaTeX will extract the file if required
+\begin{filecontents*}{example.eps}
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 19 19 221 221
+%%CreationDate: Mon Sep 29 1997
+%%Creator: programmed by hand (JK)
+%%EndComments
+gsave
+newpath
+  20 20 moveto
+  20 220 lineto
+  220 220 lineto
+  220 20 lineto
+closepath
+2 setlinewidth
+gsave
+  .4 setgray fill
+grestore
+stroke
+grestore
+\end{filecontents*}
+%
+\RequirePackage{fix-cm}
+%
+%\documentclass{svjour3}                     % onecolumn (standard format)
+%\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[twocolumn]{svjour3}          % twocolumn
+%
+\smartqed  % flush right qed marks, e.g. at end of proof
+%
+\usepackage{graphicx}
+\input{Packages}
+\input{Variables}
+%\usepackage{academicons}
+%\definecolor{orcidlogocol}{HTML}{A6CE39}
+%
+% \usepackage{mathptmx}      % use Times fonts if available on your TeX system
+%
+% insert here the call for the packages your document requires
+%\usepackage{latexsym}
+% etc.
+%
+% please place your own definitions here and don't use \def but
+% \newcommand{}{}
+%
+% Insert the name of "your journal" with
+% \journalname{myjournal}
+%
+\begin{document}
+
+\title{An Ensemble Kalman Smoother Based On Modified Cholesky Decomposition%\thanks{Grants or other notes
+%about the article that should go on the front page should be
+%placed here. General acknowledgments should be placed at the end of the article.}
+}
+%\subtitle{Do you have a subtitle?\\ If so, write it here}
+
+\titlerunning{EnKFS based on modified Cholesky}        % if too long for running head
+
+\author{Elias D. Nino-Ruiz %        \and
+%        Second Author %etc.
+}
+
+%\authorrunning{Short form of author list} % if too long for running head
+
+\institute{Elias D. Nino-Ruiz \at
+              Applied Math and Computer Science Laboratory \\
+              Department of Computer Science \\
+              Universidad del Norte, BAQ 0180001, Colombia \\
+              Tel.: +64-5-3509268\\
+%              Fax: +123-45-678910\\
+              \email{enino@uninorte.edu.co}           %  \\
+%             \emph{Present address:} of F. Author  %  if needed
+           \and
+           S. Author \at
+              second address
+}
+
+\date{Received: date / Accepted: date}
+% The correct dates will be entered by the editor
+
+
+\maketitle
+
+\begin{abstract}
+In this paper, we propose an ensemble Kalman smoother based on a modified Cholesky decomposition. The proposed method works as follows: based on an ensemble of model realizations, moments of the background error distribution are estimated at times wherein observations are available, the ensembles are utilized for creating sub-spaces onto which observations are projected and assimilation steps are performed. The sub-spaces are built by means of a modified Cholesky decomposition of the precision background covariance. Experimental tests are performed by using the Lorenz 96 model. The results reveal that, in terms of root-mean-square-error values, the accuracy of the proposed filter is much better than that of well-known smoothing methods from the specialized literature. 
+\keywords{First keyword \and Second keyword \and More}
+% \PACS{PACS code1 \and PACS code2 \and more}
+% \subclass{MSC code1 \and MSC code2 \and more}
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+To be concise, Data Assimilation (DA) is the process by which an imperfect numerical forecast and a set of noisy observations $\leftl \y_k\rightl_{k=0}^{\N-1}$ are fused in order to estimate the state of a dynamical system $\x^{*} \in \Re^{\Nstate \times 1}$ which (approximately) evolves according to some numerical model
+\begin{eqnarray}
+\label{eq:numerical-model}
+\displaystyle
+\x_{k+1} = \Mo_{t_k \rightarrow t_{k+1}} \leftp \x_k \rightp\,, \text{ for $\x_k \in \Re^{\Nstate \times 1}$, and $0 \le k \le \N-1$} \,,
+\end{eqnarray}
+%
+where $\Nstate$ is the number of model components, $\x_k \in \Re^{\Nstate \times 1}$ is a vector state, $\N$ is the number of observations which form the assimilation window, $\y_k \in \Re^{\Nobs \times 1}$ is an observation, and $\Nobs$ is the number of observed components from the vector state. For ease in the notation, we assume that observed components across the assimilation window remain unchanged. In the context of the ensemble Kalman smoother (EnKFS), at assimilation steps, an ensemble of model realizations 
+\begin{eqnarray}
+\label{eq:ensemble-model-realizations}
+\displaystyle
+\X^b_k = \leftb \x^{b[1]}_k,\, \x^{b[2]}_k,\, \ldots,\, \x^{b[\Nens]}_k \rightb \in \Re^{\Nstate \times \Nens} \,,
+\end{eqnarray}
+is commonly utilized in order to approximate the moments of background error distributions
+\begin{eqnarray}
+\label{eq:background-error-distribution}
+\displaystyle
+\x_k \sim \Nor \leftp \x_k^b,\,\B_k \rightp \,,
+\end{eqnarray}
+%
+where $\Nens$ is the ensemble size, $\x^{b[e]}_k$ is the $e$-th ensemble member, for $1 \le e \le \Nens$. Based on these samples, cross-correlations of model components in time are computed in order to exploit all information contained within the assimilation window. This provides, for instance, an initial ensemble $X_0^b$ whose model trajectory fits the observations. Due to computational costs, model dimensions are several times ensemble sizes and therefore, spurious correlations can impact the quality of analysis corrections. Typically, this situation can be overcome by using localization methods, for instance, covariance matrix localization. In this context, ensemble covariances are component-wise multiplied by a localization matrix in order to reduce far-field sampling errors. In practice, compact representations of localization matrices are available but, most of them depend on square-root approximations of such matrix which can still be a huge matrix. We think that, such matrices are not necessary and better manners to perform the smoothing process are possible via a modified Cholesky decomposition. By using this method, for instance, the precision covariances at assimilation times can be estimated in terms of Cholesky dactors and besides, such factors can be sparse by exploiting conditional independences of model components in time and in space. This implies huge savings in terms of memory usage.
+
+This paper is organized as follows: in section \ref{sec:preliminaries} ensemble based methods are discussed as well as some variational approaches, section \ref{sec:proposed-method} presents an ensemble Kalman smoother based on a modified Cholesky decomposition which exploits the conditional independence of model components in time and in space regarding their physical locations, in section \ref{sec:experimental-results} experimental tests are performed by using the Lorenz 96 model and a quasi-geostrophic model, and lastly, section \ref{sec:conclusions} states the conclusions of this research. 
+
+
+
+\section{Preliminaries}
+\label{sec:preliminaries}
+
+\subsection{The Ensemble Kalman Filter}
+\label{subsec:EnKF}
+In the ensemble Kalman filter (EnKF), the moments of the background error distribution 
+\begin{eqnarray}
+\label{eq:background-error-distribution}
+\displaystyle
+\x \sim \Nor \leftp \x^b_k,\,\B_k \rightp \,, \text{ for $0 \le k \le \N-1$} \,,
+\end{eqnarray}
+%
+are estimated via an ensemble of model realizations \eqref{eq:ensemble-model-realizations}, therefore,
+\begin{subequations}
+\begin{eqnarray}
+\label{eq:ensemble-mean}
+\displaystyle
+\x^b_k \approx \xm^b_k = \frac{1}{\Nens} \cdot \sum_{e=1}^{\Nens} \x^{b[e]}_k \in \Re^{\Nstate \times 1} \,,
+\end{eqnarray}
+\begin{eqnarray}
+\label{eq:ensemble-covariance}
+\displaystyle
+\P^b_k = \frac{1}{\Nens-1} \cdot \DX_k \cdot \DX_k^T \in \Re^{\Nstate \times \Nstate} \,,
+\end{eqnarray}
+%
+and $\DX_k \in \Re^{\Nstate \times \Nens}$ is the matrix of member deviations:
+\begin{eqnarray}
+\label{eq:ensemble-deviationsa}
+\displaystyle
+\DX_k = \X^b_k - \xm^b_k \cdot \ones^{T} \,,
+\end{eqnarray}
+%
+\end{subequations}
+%
+where $\ones$ is a vector of consistent dimension whose components are all ones. In practice, model dimensions are several times ensemble sizes and therefore, the covariance matrix \eqref{eq:ensemble-covariance} is typically rank deficient. By using covariance localization, the effect of sampling errors over  the estimated background error correlations \eqref{eq:ensemble-covariance} can be mitigated. In this context, a recent filter is the ensemble Kalman filter based on a modified Cholesky decomposition (EnKF-MC) \cite{r1}. In the EnKF-MC, the ensemble covariance \eqref{eq:ensemble-covariance} is replaced by a regularized estimation $\BE^{-1}_k$ of the precision covariance $\B^{-1}_k$, this estimator can be obtained in terms of Cholesky factors:
+\begin{eqnarray}
+\label{eq:modified-Cholesky}
+\displaystyle
+\BE^{-1}_k = \L_k \cdot \D_k \cdot \L_k \,,
+\end{eqnarray} 
+%
+where $\L_k \in \Re^{\Nstate \times \Nstate}$ is a lower triangular matrix whose non-zero sub-diagonal elements are obtained by fitting models of the form:
+\begin{eqnarray}
+\label{eq:models-of-the-form}
+\displaystyle
+\leftb \x^{[i]} \rightb^T = \sum_{j=1}^{i-1} - \leftl  \L_k \rightl_{i,j} \cdot \leftb \x^{[j]} \rightb^T + \errb_i \in \Re^{\Nens \times 1} \,, \text{ for $1 \le i \le \Nstate$} \,,
+\end{eqnarray}
+%
+where $\x^{[i]} \in \Re^{1 \times \Nens}$ stands for the $i$-th row of the ensemble \eqref{eq:ensemble-model-realizations}. Likewise, $\D_k \in \Re^{\Nstate \times \Nstate}$ is a diagonal matrix whose diagonal elements are the reciprocal variances of residuals in \eqref{eq:models-of-the-form},
+\begin{eqnarray}
+\leftl \D_k \rightl_{i,i} = \var \leftp \leftb \x^{[i]} \rightb^T + \sum_{j=1}^{i-1} \leftl  \L_k \rightl_{i,j} \cdot \leftb \x^{[j]} \rightb^T \rightp^{-1} \,.
+\end{eqnarray}
+%
+The analysis ensemble can then be estimated as follows:
+\begin{eqnarray}
+\X^a_k &=& \X^b_k + \AE_k \cdot \H^T \cdot \R_k^{-1} \cdot \Y^s_k \,,
+\end{eqnarray}
+%
+where $\AE \in \Re^{\Nstate \times \Nstate}$ is the analysis covariance matrix,
+\begin{eqnarray}
+\label{eq:analysis-covariance}
+\displaystyle
+\AE = \leftb \BE^{-1} + \H_k^T \cdot \R^{-1}_k \cdot \H_k \rightb^{-1} \,,
+\end{eqnarray} 
+%
+and columns of matrix $\Y^s_k \in \Re^{\Nobs \times \Nens}$ are drawn from a Normal distribution with moments $\Nor \leftp \y_k,\,\R_k \rightp$. After the assimilation steps, ensemble members are propagated in time until the next assimilation cycle,
+\begin{eqnarray*}
+\displaystyle
+\x^{b[e]}_{k+1} &=& \Mo_{t_{k} \rightarrow t_{k+1}} \leftp \x^{a[e]}_{k} \rightp \,,  \text{ for $1 \le e \le \Nens$} \,,
+\end{eqnarray*}
+%
+from which a new background ensemble is obtained. The direct computation of matrix \eqref{eq:analysis-covariance} is not actually needed and some matrix-free methods are now proposed in the literature.
+\subsection{Hybrid Ensemble Four Dimensional Methods}
+\label{subsec:hybrid-methods}
+In the context of four-dimensional data assimilation (4D-Var) cost functions of the form,
+\begin{eqnarray}
+\label{eq:4D-Var-cost-function}
+\displaystyle
+\J_{4D}(\x) = \frac{1}{2} \cdot \norm{\x_0-\x_0^b}_{\leftb \P^b_{0} \rightb^{-1}}^2 + \frac{1}{2} \cdot \sum_{k=0}^{\N-1} \norm{\y_k-\Ho_k \leftp \x_k \rightp}^2_{\R_k^{-1}} \,,
+\end{eqnarray}
+%
+are considered in order to find the initial condition $\x_0 \in \Re^{\Nstate \times 1}$, for an imperfect numerical model $\Mo:\Re^{\Nstate \times 1} \rightarrow \Re^{\Nstate \times 1}$, whose model trajectory
+\begin{eqnarray}
+\label{eq:model-constraint}
+\displaystyle
+\x_{k} = \Mo_{t_{k-1} \rightarrow t_k} \leftp \x_{k-1}\rightp  \,, \text{for $0 \le k \le \N-1$}\,,
+\end{eqnarray}
+best fit the given observations $\leftl \y_k \rightl_{k=0}^{\N-1}$, where $\N$ is the number of observation which form the assimilation window, $\Nstate$ denotes the number of model components, $\x_0^b \in \Re^{\Nstate \times 1}$ is the initial background state, $\P^b_0 \in \Re^{\Nstate \times \Nstate}$ is the background covariance matrix at time 0, and at time $k$, for $0 \le k \le \N-1$, $\y_k \in \Re^{\Nobs \times 1}$ is the observation, $\Nobs$ is the number of observed components from the model state, $\R_k \in \Re^{\Nobs \times \Nobs}$ is the data error covariance matrix, $\Ho_k:\Re^{\Nstate \times 1} \rightarrow \Re^{\Nobs \times 1}$ is the observation operator which maps states from the model space to the observation space. In strong constraint 4D-Var, typically, the best initial condition can be found via the optimization problem:
+\begin{eqnarray}
+\label{eq:4D-constraint-optimization-problem}
+\displaystyle
+\x_0^{*} = \underset{\x_0}{\arg\,\min} \, \J_{4D}(\x_0) \,,\text{ subject to \eqref{eq:model-constraint}} \,.
+\end{eqnarray}
+%
+Typically, the optimization process of \eqref{eq:4D-constraint-optimization-problem} involves the adjoint of \eqref{eq:4D-Var-cost-function} and therefore, ensemble based methods are commonly utilized in order to avoid such computation. In this context, an ensemble of model realizations,
+
+\subsection{The Ensemble Kalman Smoother}
+\label{subsec:EnKFS}
+%
+is utilized in order to perform a smoothing process of observations:
+\begin{eqnarray}
+\xag^a = \xag^b  + \leftb \leftb \Pag^b \rightb^{-1} + \Hag^T \cdot \Rag^{-1} \cdot \Hag \rightb^{-1} \cdot \leftb \yag-\Hag \cdot \xag^b \rightb \in \Re^{\Nstateg \times \Nens} \,,
+\end{eqnarray}
+%
+where $\leftl \x^{b[e]}_k \rightl_{k=0}^{\Nens-1}$ is the $e$-th ensemble member at time $k$, for $1 \le e \le \Nens$, $\Nstateg = \Nstate \cdot \N$, $\Pag^b \in \Re^{\Nstateg \times \Nstateg}$, $\Rag \in \Re^{\Nobsg \times \Nobsg}$ and $\Hag \in \Re^{\Nobsg \times \Nstateg}$ are block-diagonal matrices with diagonal blocks $\leftl \P^b_k \rightl_{k=0}^{\N-1}$, $\leftl \R_k \rightl_{k=0}^{\N-1}$, and $\leftl \H_k \rightl_{k=0}^{\N-1}$, respectively, and $\P^b_k \in \Re^{\Nstate \times \Nstate}$ is the ensemble covariance. Likewise, $\xag^a \in \Re^{\Nstateg \times 1}$, $\xag^b \in \Re^{\Nstateg \times 1}$, and $\yag \in \Re^{\Nobsg \times 1}$ are augmented vectors with elements, 
+\begin{eqnarray}
+\xag^a = \begin{bmatrix}
+\xm^a_0 \\
+\xm^a_1 \\
+\vdots \\
+\xm^a_{\N-1}
+\end{bmatrix} \in \Re^{\Nstateg \times 1} \,,
+\xag^b = \begin{bmatrix}
+\xm^b_0 \\
+\xm^b_1 \\
+\vdots \\
+\xm^b_{\N-1}
+\end{bmatrix} \in \Re^{\Nstateg \times 1} \,, \text{ and }
+\yag = \begin{bmatrix}
+\y_0 \\
+\y_1 \\
+\vdots \\
+\y_{\N-1}
+\end{bmatrix} \in \Re^{\Nobsg \times 1} \,,
+\end{eqnarray}
+%
+where $\leftl \xm^b_k \rightl_{k=0}^{\N-1} \in \Re^{\Nstate \times 1}$ denotes ensemble means at observation times. Similarly, $\leftl \xm^a_k \rightl_{k=0}^{\N-1} \in \Re^{\Nstate \times 1}$ stands for analysis means. Thus, $\xm^a_0 \approx \x_0^{*}$ in \eqref{eq:4D-constraint-optimization-problem}. A main issue with this approximation is that, sampling errors degenerate the quality of background error correlations in $\Pag^b$ and therefore, the analysis corrections are highly impacted by such estimation. Localization methods are commonly utilized in order to overcome this situation but, the direct localization of covariance matrices such as $\Pag^b$ is prohibitive owing to his dimension, indeed, it is impossible to explicitly store such matrix in memory. This paper is highly motivated by such constraint and therefore, we seek an efficient implementation of the ensemble Kalman smoother by using conditional independence of model components in time and space via a modified Cholesky decomposition. This decomposition allow us to write $\Pag^b$ in terms of Cholesky factors and even more, such factors can be highly sparse which implies huge saving in terms of memory usage during the assimilation of observations.
+
+\section{Proposed Method}
+\label{sec:proposed-method}
+
+\section{Experimental Results}
+\label{sec:experimental-results}
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+\end{document}
+% end of file template.tex
+
